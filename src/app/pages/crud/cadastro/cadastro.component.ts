@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {CargoEnum, Cargos} from "../../../models/cargoEnum";
+import {PessoaService} from "../../../services/pessoa.service";
 
 @Component({
   selector: 'app-cadastro',
@@ -14,7 +15,9 @@ export class CadastroComponent implements OnInit {
   formCadastro: FormGroup;
   cargos = Cargos.todos();
 
-  constructor(private fb:FormBuilder) {
+  constructor(
+    private pessoaService: PessoaService,
+    private fb:FormBuilder, private router: Router) {
 
     this.formCadastro = this.fb.group({
       nome: ['', Validators.required],
@@ -37,7 +40,8 @@ export class CadastroComponent implements OnInit {
       return;
     }
 
-    console.log(this.formCadastro.value);
+    this.pessoaService.aoSalvar.next(this.formCadastro.value);
+    this.router.navigateByUrl('/crud/listagem');
   }
 
   getErrorMessage() {
@@ -50,5 +54,9 @@ export class CadastroComponent implements OnInit {
     }
 
     return formControl.hasError('email') ? 'O email não é válido' : '';
+  }
+
+  cancelar(){
+    this.router.navigateByUrl('/crud');
   }
 }

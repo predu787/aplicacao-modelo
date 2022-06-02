@@ -1,26 +1,22 @@
-import {Component} from '@angular/core';
-import {Observable, ReplaySubject} from "rxjs";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable, ReplaySubject, Subscription} from "rxjs";
 import {DataSource} from "@angular/cdk/collections";
-import {Router} from "@angular/router";
+import {ActivatedRouteSnapshot, Router} from "@angular/router";
+import {PessoaService} from "../../../services/pessoa.service";
 
 export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
+  nome: string;
+  email: string;
+  cargo: string;
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+  {nome: 'Lace', email: 'email@ex.com', cargo: 'Professor'},
+  {nome: 'Malxalo', email: 'email@ex.com', cargo: 'Professor'},
+  {nome: 'Peufoelas', email: 'email@ex.com', cargo: 'Professor'},
+  {nome: 'Pamuen', email: 'email@ex.com', cargo: 'Professor'},
+  {nome: 'Aranrod', email: 'email@ex.com', cargo: 'Diretor'},
+  {nome: 'Zomau', email: 'email@ex.com', cargo: 'Substituto'}
 ];
 
 /**
@@ -31,13 +27,32 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['listagem.component.scss'],
   templateUrl: 'listagem.component.html',
 })
-export class ListagemComponent {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+export class ListagemComponent implements OnInit, OnDestroy{
+  displayedColumns: string[] = ['nome', 'email', 'cargo'];
   dataToDisplay = [...ELEMENT_DATA];
 
   dataSource = new ExampleDataSource(this.dataToDisplay);
 
-  constructor(private router: Router) {
+  sub: Subscription | undefined;
+
+  constructor(
+    private pessoaSevice: PessoaService,
+    private router: Router) {
+  }
+
+  ngOnDestroy() {
+    if (this.sub){
+      this.sub.unsubscribe()
+    }
+  }
+
+  ngOnInit() {
+    this.sub = this.pessoaSevice.aoSalvar.subscribe(value => {
+      if(value){
+        this.dataSource.setData([value, ...this.dataToDisplay]);
+      }
+      console.log(value);
+    })
   }
 
   addData() {
