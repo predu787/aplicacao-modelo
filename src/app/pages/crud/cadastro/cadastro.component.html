@@ -1,0 +1,37 @@
+<div class="container">
+  <form [formGroup]="formCadastro" (ngSubmit)="salvar()">
+    <mat-card>
+      <mat-card-title>Cadastro</mat-card-title>
+      <mat-card-subtitle>cadastro de funcionários</mat-card-subtitle>
+
+      <p>
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome">
+          <mat-error *ngIf="formCadastro.get('nome')?.hasError('required')">Informe o nome</mat-error>
+        </mat-form-field>
+      </p>
+
+      <div class="example-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="ex@exemplo.com" formControlName="email" required>
+          <mat-icon matSuffix>user</mat-icon>
+          <mat-error *ngIf="formCadastro.get('email')?.invalid">{{getErrorMessage()}}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Selecione</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let cargo of cargos" [value]="cargo.value">{{cargo.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-card-actions align="end">
+        <button mat-button>Cancelar</button>
+        <button mat-button>Salvar</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>
